@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#define THRESHOLD 198
+#define THRESHOLD 90
 
 typedef struct square {
     int x, y;

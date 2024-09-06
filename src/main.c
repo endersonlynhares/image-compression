@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/quadtree.h"
-#include "../include/image_compression.h"
+#include "../include/image.h"
 
 int main(void) {
     int width, height, max_value;

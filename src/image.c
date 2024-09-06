@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../include/image_compression.h"
+#include "../include/image.h"
 
 unsigned char **read_pgm(const char *filename, int *width, int *height, int *max_value) {
     FILE *file = fopen(filename, "r");
@@ -73,8 +73,23 @@ void save_pgm_from_quadtree(const char *filename, quadtree *tree, int size){
 
     unsigned char **image = (unsigned char **)malloc(size * sizeof(unsigned char *));
 
+    if (image == NULL) {
+        perror("Erro ao alocar memória para a imagem");
+        fclose(file);
+        return;
+    }
+    
     for (int i = 0; i < size; i++) {
         image[i] = (unsigned char *)malloc(size * sizeof(unsigned char));
+        if (image[i] == NULL) {
+            perror("Erro ao alocar memória para a linha da imagem");
+            for (int j = 0; j < i; j++) {
+                free(image[j]);
+            }
+            free(image);
+            fclose(file);
+            return;
+        }
     }
 
     fill_image(tree, image);
@@ -91,7 +106,6 @@ void save_pgm_from_quadtree(const char *filename, quadtree *tree, int size){
     }
 
     free(image);
-
     fclose(file);
 }
 

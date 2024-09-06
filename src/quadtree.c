@@ -42,7 +42,7 @@ quadtree *create_quadtree(square boundary, unsigned char **image) {
     variance /= (size * size);
 
     // Condição de uma nova folha (uma nova criação de quadrantes): Se a variância estiver abaixo do limiar ou o tamanho for 1
-    if (variance <= THRESHOLD || size == 1) {
+    if (variance < THRESHOLD || size == 1) {
         tree->is_leaf = true;
     } else {
         tree->is_leaf = false;
