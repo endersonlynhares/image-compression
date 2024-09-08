@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-/* Cria e retorna um quadrado dado suas coordenadas do canto superior esquerdo e tamanho */
+/* Create and return a square given its top-left coordinates and size */
 struct square create_square(int x, int y, int size)
 {
     struct square sq;
@@ -14,8 +14,8 @@ struct square create_square(int x, int y, int size)
     return sq;
 }
 
-/* Cria uma quadtree para um dado limite e dados de imagem */
-struct quadtree *create_quadtree(struct square boundary, unsigned char **image)
+/* Cria uma quadtree para um dado limite e dados de imagem usando um limite de variação dinâmico */
+struct quadtree *create_quadtree(struct square boundary, unsigned char **image, int threshold)
 {
     struct quadtree *tree;
     int sum = 0, i, j;
@@ -52,7 +52,7 @@ struct quadtree *create_quadtree(struct square boundary, unsigned char **image)
     variance /= (size * size);
 
     /* Verifica se o nó deve ser uma folha com base na variação e no tamanho */
-    if (variance < THRESHOLD || size == 1) {
+    if (variance < threshold || size == 1) {
         tree->is_leaf = true;
     } else {
         int half_size = size / 2;
@@ -60,10 +60,10 @@ struct quadtree *create_quadtree(struct square boundary, unsigned char **image)
         tree->is_leaf = false;
 
         /* Cria recursivamente os quadrantes filhos */
-        tree->northwest = create_quadtree(create_square(boundary.x, boundary.y, half_size), image);
-        tree->northeast = create_quadtree(create_square(boundary.x + half_size, boundary.y, half_size), image);
-        tree->southwest = create_quadtree(create_square(boundary.x, boundary.y + half_size, half_size), image);
-        tree->southeast = create_quadtree(create_square(boundary.x + half_size, boundary.y + half_size, half_size), image);
+        tree->northwest = create_quadtree(create_square(boundary.x, boundary.y, half_size), image, threshold);
+        tree->northeast = create_quadtree(create_square(boundary.x + half_size, boundary.y, half_size), image, threshold);
+        tree->southwest = create_quadtree(create_square(boundary.x, boundary.y + half_size, half_size), image, threshold);
+        tree->southeast = create_quadtree(create_square(boundary.x + half_size, boundary.y + half_size, half_size), image, threshold);
     }
 
     return tree;
