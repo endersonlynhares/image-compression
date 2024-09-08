@@ -3,9 +3,6 @@
 
 #include <stdbool.h>
 
-/* Limite de variação para decidir se um quadrante é homogêneo */
-#define THRESHOLD 90
-
 /* Estrutura que representa uma região quadrada na imagem */
 struct square {
     int x;      /* Coordenada x do canto superior esquerdo */
@@ -28,7 +25,7 @@ struct quadtree {
 
 /* Protótipos de funções */
 struct square create_square(int x, int y, int size);
-struct quadtree *create_quadtree(struct square boundary, unsigned char **image);
+struct quadtree *create_quadtree(struct square boundary, unsigned char **image, int threshold);
 void free_quadtree(struct quadtree *tree);
 
 #endif /* QUADTREE_H */
