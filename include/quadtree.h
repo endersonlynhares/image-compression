@@ -3,25 +3,29 @@
 
 #include <stdbool.h>
 
-#define THRESHOLD 90
+/* Estrutura que representa uma região quadrada na imagem */
+struct square {
+    int x;      /* Coordenada x do canto superior esquerdo */
+    int y;      /* Coordenada y do canto superior esquerdo */
+    int size;   /* Tamanho do quadrado (largura e altura) */
+};
 
-typedef struct square {
-    int x, y;
-    int size;
-} square;
+/* Estrutura do nó da quadtree */
+struct quadtree {
+    struct square boundary;     /* A área quadrada representada por este nó */
+    unsigned char pixel_value;  /* Valor médio do pixel (para nós-folha) */
+    bool is_leaf;               /* Indica se o nó é uma folha */
 
-typedef struct quadtree {
-    square boundary;
-    unsigned char pixel_value;
-    bool is_leaf;
+    /* Ponteiros para os quadrantes filhos */
     struct quadtree *northwest;
     struct quadtree *northeast;
     struct quadtree *southwest;
     struct quadtree *southeast;
-} quadtree;
+};
 
-square create_square(int, int, int);
-quadtree *create_quadtree(square, unsigned char **);
-void free_quadtree(quadtree *);
+/* Protótipos de funções */
+struct square create_square(int x, int y, int size);
+struct quadtree *create_quadtree(struct square boundary, unsigned char **image, int threshold);
+void free_quadtree(struct quadtree *tree);
 
-#endif
+#endif /* QUADTREE_H */
