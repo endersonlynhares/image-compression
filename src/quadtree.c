@@ -1,9 +1,9 @@
-#include "../include/quadtree.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "../include/quadtree.h"
+#include "../include/image.h"
 
-/* Create and return a square given its top-left coordinates and size */
 struct square create_square(int x, int y, int size)
 {
     struct square sq;
@@ -14,8 +14,7 @@ struct square create_square(int x, int y, int size)
     return sq;
 }
 
-/* Cria uma quadtree para um dado limite e dados de imagem usando um limite de variação dinâmico */
-struct quadtree *create_quadtree(struct square boundary, unsigned char **image, int threshold)
+struct quadtree *create_quadtree(struct square boundary, struct image *img, int threshold)
 {
     struct quadtree *tree;
     int sum = 0, i, j;
@@ -35,7 +34,7 @@ struct quadtree *create_quadtree(struct square boundary, unsigned char **image, 
     /* Calcula o valor médio dos pixels dentro do quadrado */
     for (i = 0; i < size; i++) {
         for (j = 0; j < size; j++) {
-            sum += image[boundary.y + i][boundary.x + j];
+            sum += img->pixels[boundary.y + i][boundary.x + j];
         }
     }
 
@@ -45,7 +44,7 @@ struct quadtree *create_quadtree(struct square boundary, unsigned char **image, 
     /* Calcula a variação dos pixels */
     for (i = 0; i < size; i++) {
         for (j = 0; j < size; j++) {
-            variance += pow(image[boundary.y + i][boundary.x + j] - avg, 2);
+            variance += pow(img->pixels[boundary.y + i][boundary.x + j] - avg, 2);
         }
     }
 
@@ -53,23 +52,59 @@ struct quadtree *create_quadtree(struct square boundary, unsigned char **image, 
 
     /* Verifica se o nó deve ser uma folha com base na variação e no tamanho */
     if (variance < threshold || size == 1) {
-        tree->is_leaf = true;
+        tree->is_leaf = 1;
     } else {
         int half_size = size / 2;
 
-        tree->is_leaf = false;
+        tree->is_leaf = 0;
 
         /* Cria recursivamente os quadrantes filhos */
-        tree->northwest = create_quadtree(create_square(boundary.x, boundary.y, half_size), image, threshold);
-        tree->northeast = create_quadtree(create_square(boundary.x + half_size, boundary.y, half_size), image, threshold);
-        tree->southwest = create_quadtree(create_square(boundary.x, boundary.y + half_size, half_size), image, threshold);
-        tree->southeast = create_quadtree(create_square(boundary.x + half_size, boundary.y + half_size, half_size), image, threshold);
+        tree->northwest = create_quadtree(create_square(boundary.x, boundary.y, half_size), img, threshold);
+        tree->northeast = create_quadtree(create_square(boundary.x + half_size, boundary.y, half_size), img, threshold);
+        tree->southwest = create_quadtree(create_square(boundary.x, boundary.y + half_size, half_size), img, threshold);
+        tree->southeast = create_quadtree(create_square(boundary.x + half_size, boundary.y + half_size, half_size), img, threshold);
     }
 
     return tree;
 }
 
-/* Libera a memória alocada para a quadtree */
+void save_quadtree_binary(struct quadtree *qt, FILE *file)
+{
+    if (qt == NULL) {
+        return;
+    }
+
+    unsigned char pixel_value = (unsigned char) qt->pixel_value;
+    unsigned char is_leaf = (unsigned char) qt->is_leaf;
+
+    fwrite(&is_leaf, sizeof(unsigned char), 1, file);
+    fwrite(&qt->boundary.x, sizeof(int), 1, file);
+    fwrite(&qt->boundary.y, sizeof(int), 1, file);
+    fwrite(&qt->boundary.size, sizeof(int), 1, file);
+    fwrite(&pixel_value, sizeof(unsigned char), 1, file);
+
+    if (!qt->is_leaf)
+    {
+        save_quadtree_binary(qt->northwest, file);
+        save_quadtree_binary(qt->northeast, file);
+        save_quadtree_binary(qt->southwest, file);
+        save_quadtree_binary(qt->southeast, file);
+    }
+}
+
+void save_quadtree(const char *filename, struct quadtree *qt)
+{
+    FILE *file = fopen(filename, "wb+");
+    if (!file) {
+        perror("Erro ao abrir arquivo para salvar a quadtree");
+        return;
+    }
+
+    save_quadtree_binary(qt, file);
+
+    fclose(file);
+}
+
 void free_quadtree(struct quadtree *tree)
 {
     if (!tree)

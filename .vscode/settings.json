@@ -1,11 +1,15 @@
 {
     "files.associations": {
+        "*.page-template": "vue",
+        "*.layout-template": "vue",
+        "*.vue": "vue",
         "stdio.h": "c",
         "stdlib.h": "c",
         "math.h": "c",
         "quadtree.h": "c",
         "stdbool.h": "c",
-        "image_compression.h": "c"
+        "image_compression.h": "c",
+        "image.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
