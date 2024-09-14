@@ -68,19 +68,40 @@ struct quadtree *create_quadtree(struct square boundary, struct image *img, int 
     return tree;
 }
 
+// void save_quadtree_binary(struct quadtree *qt, FILE *file)
+// {
+//     if (qt == NULL) {
+//         return;
+//     }
+
+//     unsigned char pixel_value = (unsigned char) qt->pixel_value;
+//     unsigned char is_leaf = (unsigned char) qt->is_leaf;
+
+//     fwrite(&is_leaf, sizeof(unsigned char), 1, file);
+//     fwrite(&qt->boundary.x, sizeof(int), 1, file);
+//     fwrite(&qt->boundary.y, sizeof(int), 1, file);
+//     fwrite(&qt->boundary.size, sizeof(int), 1, file);
+//     fwrite(&pixel_value, sizeof(unsigned char), 1, file);
+
+//     if (!qt->is_leaf)
+//     {
+//         save_quadtree_binary(qt->northwest, file);
+//         save_quadtree_binary(qt->northeast, file);
+//         save_quadtree_binary(qt->southwest, file);
+//         save_quadtree_binary(qt->southeast, file);
+//     }
+// }
+
 void save_quadtree_binary(struct quadtree *qt, FILE *file)
 {
     if (qt == NULL) {
         return;
     }
 
-    unsigned char pixel_value = (unsigned char) qt->pixel_value;
     unsigned char is_leaf = (unsigned char) qt->is_leaf;
+    unsigned char pixel_value = (unsigned char) qt->pixel_value;
 
     fwrite(&is_leaf, sizeof(unsigned char), 1, file);
-    fwrite(&qt->boundary.x, sizeof(int), 1, file);
-    fwrite(&qt->boundary.y, sizeof(int), 1, file);
-    fwrite(&qt->boundary.size, sizeof(int), 1, file);
     fwrite(&pixel_value, sizeof(unsigned char), 1, file);
 
     if (!qt->is_leaf)
@@ -92,9 +113,10 @@ void save_quadtree_binary(struct quadtree *qt, FILE *file)
     }
 }
 
+
 void save_quadtree(const char *filename, struct quadtree *qt)
 {
-    FILE *file = fopen(filename, "wb+");
+    FILE *file = fopen(filename, "wb");
     if (!file) {
         perror("Erro ao abrir arquivo para salvar a quadtree");
         return;
