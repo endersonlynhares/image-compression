@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     }
 
     /* Salva a imagem comprimidaem versão uma bitstream */
-    save_quadtree(output_file, tree);
+    save_quadtree(output_file, tree, img.width);
 
     /* Libera a memória alocada */
     free_quadtree(tree);

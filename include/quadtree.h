@@ -1,5 +1,7 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
+#include <stdint.h>
+
 
 /* Estrutura que representa uma região quadrada na imagem */
 struct square {
@@ -23,8 +25,11 @@ struct quadtree {
 
 /* Protótipos de funções */
 struct square create_square(int x, int y, int size);
-void save_quadtree_binary(struct quadtree *qt, FILE *file);
-void save_quadtree(const char *filename, struct quadtree *qt);
+// void save_quadtree_binary(struct quadtree *qt, FILE *file);
+// void save_quadtree(const char *filename, struct quadtree *qt);
 void free_quadtree(struct quadtree *tree);
+void save_quadtree_binary(struct quadtree *qt, FILE *file);
+void save_quadtree(const char *filename, struct quadtree *qt, int image_dimension);
+void write_9bits_to_file(FILE *file, uint8_t is_leaf, uint8_t pixel_value);
 
 #endif /* QUADTREE_H */

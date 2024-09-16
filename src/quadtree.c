@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdint.h>
 #include "../include/quadtree.h"
 #include "../include/image.h"
 
@@ -92,20 +93,77 @@ struct quadtree *create_quadtree(struct square boundary, struct image *img, int 
 //     }
 // }
 
+// void save_quadtree_binary(struct quadtree *qt, FILE *file)
+// {
+//     if (qt == NULL) {
+//         return;
+//     }
+
+//     unsigned char is_leaf = (unsigned char) qt->is_leaf;
+//     unsigned char pixel_value = (unsigned char) qt->pixel_value;
+
+//     fwrite(&is_leaf, sizeof(unsigned char), 1, file);
+//     fwrite(&pixel_value, sizeof(unsigned char), 1, file);
+
+//     if (!qt->is_leaf)
+//     {
+//         save_quadtree_binary(qt->northwest, file);
+//         save_quadtree_binary(qt->northeast, file);
+//         save_quadtree_binary(qt->southwest, file);
+//         save_quadtree_binary(qt->southeast, file);
+//     }
+// }
+
+
+// void save_quadtree(const char *filename, struct quadtree *qt)
+// {
+//     FILE *file = fopen(filename, "wb");
+//     if (!file) {
+//         perror("Erro ao abrir arquivo para salvar a quadtree");
+//         return;
+//     }
+
+//     save_quadtree_binary(qt, file);
+
+//     fclose(file);
+// }
+
+uint8_t bit_buffer = 0;  // Armazena os bits temporariamente
+int bit_count = 0;       // Contagem de bits no buffer
+
+// Função para escrever 9 bits no arquivo
+void write_9bits_to_file(FILE *file, uint8_t is_leaf, uint8_t pixel_value)
+{
+    // Compactar os 9 bits (1 bit de is_leaf + 8 bits de pixel_value)
+    uint16_t data = ((is_leaf & 1) << 8) | (pixel_value & 0xFF);
+
+    // Inserir bits no buffer de bits
+    for (int i = 8; i >= 0; i--) {
+        // Extrair o bit mais significativo de data
+        bit_buffer = (bit_buffer << 1) | ((data >> i) & 1);
+        bit_count++;
+
+        // Se o buffer tiver 8 bits, escreva no arquivo
+        if (bit_count == 8) {
+            fwrite(&bit_buffer, sizeof(uint8_t), 1, file);
+            bit_count = 0;
+            bit_buffer = 0;  // Resetar buffer
+        }
+    }
+}
+
+// Função recursiva para salvar a quadtree de forma compactada
 void save_quadtree_binary(struct quadtree *qt, FILE *file)
 {
     if (qt == NULL) {
         return;
     }
 
-    unsigned char is_leaf = (unsigned char) qt->is_leaf;
-    unsigned char pixel_value = (unsigned char) qt->pixel_value;
+    // Salvar 9 bits (1 bit para is_leaf, 8 bits para pixel_value)
+    write_9bits_to_file(file, qt->is_leaf, qt->pixel_value);
 
-    fwrite(&is_leaf, sizeof(unsigned char), 1, file);
-    fwrite(&pixel_value, sizeof(unsigned char), 1, file);
-
-    if (!qt->is_leaf)
-    {
+    // Se não for folha, salvar as subárvores
+    if (!qt->is_leaf) {
         save_quadtree_binary(qt->northwest, file);
         save_quadtree_binary(qt->northeast, file);
         save_quadtree_binary(qt->southwest, file);
@@ -113,8 +171,8 @@ void save_quadtree_binary(struct quadtree *qt, FILE *file)
     }
 }
 
-
-void save_quadtree(const char *filename, struct quadtree *qt)
+// Função para salvar a quadtree em um arquivo binário
+void save_quadtree(const char *filename, struct quadtree *qt, int image_dimension)
 {
     FILE *file = fopen(filename, "wb");
     if (!file) {
@@ -122,10 +180,21 @@ void save_quadtree(const char *filename, struct quadtree *qt)
         return;
     }
 
+    // Escreve a dimensão da imagem no início do arquivo
+    fwrite(&image_dimension, sizeof(unsigned int), 1, file);
+
+    // Salva a quadtree de forma compactada
     save_quadtree_binary(qt, file);
+
+    // Se houver bits sobrando no buffer, escreva-os no arquivo
+    if (bit_count > 0) {
+        bit_buffer <<= (8 - bit_count);  // Preencher o restante com zeros
+        fwrite(&bit_buffer, sizeof(uint8_t), 1, file);
+    }
 
     fclose(file);
 }
+
 
 void free_quadtree(struct quadtree *tree)
 {
