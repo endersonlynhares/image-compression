@@ -14,8 +14,8 @@
  * **************************************************
  */
 
-#ifndef IMAGE_COMPRESSION_H
-#define IMAGE_COMPRESSION_H
+#ifndef IMAGE_H
+#define IMAGE_H
 
 #include "quadtree.h"
 
@@ -34,4 +34,4 @@ void read_pgm(struct image *img, const char *filename);
 /* Função para criar uma quadtree a partir da imagem e um valor de limiar. */
 struct quadtree *create_quadtree(struct square boundary, struct image *img, int threshold);
 
-#endif /* IMAGE_COMPRESSION_H */
+#endif /* IMAGE_H */
