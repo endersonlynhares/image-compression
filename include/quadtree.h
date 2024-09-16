@@ -1,13 +1,13 @@
 /*
  * **************************************************
- * Aluno: 
- * Matrícula:
+ * Aluno: Enderson Aguiar Rodrigues Linhares
+ * Matrícula: 20232045050074
  * Aluno: Matheus Giovanni Sagioro
  * Matrícula: 20232045050201
- * Aluno: 
- * Matrícula:
- * Aluno: 
- * Matrícula:
+ * Aluno: Erivando de Castro Batista
+ * Matrícula: 20232045050120
+ * Aluno: Ian Felipo Nascimento Oliveira
+ * Matrícula: 20232045050082
  * Avaliação 04: Trabalho Final
  * 04.505.23-2024.1 - Prof. Daniel Ferreira
  * Compilador: gcc-12
