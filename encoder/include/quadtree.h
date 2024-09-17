@@ -1,23 +1,6 @@
-/*
- * **************************************************
- * Aluno: Enderson Aguiar Rodrigues Linhares
- * Matrícula: 20232045050074
- * Aluno: Matheus Giovanni Sagioro
- * Matrícula: 20232045050201
- * Aluno: Erivando de Castro Batista
- * Matrícula: 20232045050120
- * Aluno: Ian Felipo Nascimento Oliveira
- * Matrícula: 20232045050082
- * Avaliação 04: Trabalho Final
- * 04.505.23-2024.1 - Prof. Daniel Ferreira
- * Compilador: gcc-12
- * **************************************************
- */
-
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
-#include <stdint.h>
 
 /* Estrutura que representa uma região quadrada na imagem */
 struct square {
@@ -28,9 +11,9 @@ struct square {
 
 /* Estrutura do nó da quadtree */
 struct quadtree {
-    struct square boundary;       /* A área quadrada representada por este nó */
-    unsigned char pixel_value;    /* Valor médio do pixel (para nós-folha) */
-    unsigned char is_leaf;        /* Indica se o nó é uma folha */
+    struct square boundary;     /* A área quadrada representada por este nó */
+    unsigned char pixel_value;  /* Valor médio do pixel (para nós-folha) */
+    unsigned char is_leaf;               /* Indica se o nó é uma folha */
 
     /* Ponteiros para os quadrantes filhos */
     struct quadtree *northwest;
