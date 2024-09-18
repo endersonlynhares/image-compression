@@ -1,5 +1,5 @@
-#include "../include/image.h"
-#include "../include/quadtree.h"
+#include "../../lib/quadtree.h"
+#include "../../lib/image.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
     int image_dimension;
-    struct quad_tree *qt;
+    struct quadtree *qt;
     int **image;
     int size;
     const char *input_file, *output_file;

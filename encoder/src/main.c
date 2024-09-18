@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../include/quadtree.h"
-#include "../include/image.h"
+#include "../../lib/quadtree.h"
+#include "../../lib/image.h"
 
 int main(int argc, char *argv[])
 {

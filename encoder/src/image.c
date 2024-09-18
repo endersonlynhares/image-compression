@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include "../include/image.h"
+#include "../../lib/image.h"
 
 void read_pgm(struct image *img, const char *filename)
 {

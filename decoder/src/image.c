@@ -1,7 +1,7 @@
-#include "../include/image.h"
+#include "../../lib/image.h"
 
 /* Preenche a imagem com valores da quadtree */
-void fill_image(struct quad_tree *qt, int **image)
+void fill_image(struct quadtree *qt, int **image)
 {
     if (qt->is_leaf) {
         for (int i = 0; i < qt->boundary.size; i++) {

@@ -1,13 +1,13 @@
-#include "../include/quadtree.h"
+#include "../../lib/quadtree.h"
 
 /* Carrega a quadtree a partir de um arquivo binário */
-struct quad_tree *load_quadtree_bin(FILE *file, int x, int y, int size)
+struct quadtree *load_quadtree_bin(FILE *file, int x, int y, int size)
 {
-    struct quad_tree *qt;
+    struct quadtree *qt;
     static uint8_t buffer = 0; /* Buffer para armazenar bytes lidos do arquivo */
     static int bit_pos = 0;    /* Posição do bit atual no buffer */
 
-    qt = (struct quad_tree *)malloc(sizeof(struct quad_tree));
+    qt = (struct quadtree *)malloc(sizeof(struct quadtree));
     if (qt == NULL) {
         perror("Erro ao alocar memória para o quadtree");
         return NULL;
@@ -42,7 +42,7 @@ struct quad_tree *load_quadtree_bin(FILE *file, int x, int y, int size)
 }
 
 /* Carrega a quadtree a partir de um arquivo de nome filename */
-struct quad_tree *load_quadtree(const char *filename, int *image_dimension)
+struct quadtree *load_quadtree(const char *filename, int *image_dimension)
 {
     FILE *file = fopen(filename, "rb");
     if (!file) {
@@ -54,27 +54,24 @@ struct quad_tree *load_quadtree(const char *filename, int *image_dimension)
     fread(image_dimension, sizeof(unsigned int), 1, file);
 
     /* Carregar a quadtree a partir do arquivo binário */
-    struct quad_tree *qt = load_quadtree_bin(file, 0, 0, *image_dimension);
+    struct quadtree *qt = load_quadtree_bin(file, 0, 0, *image_dimension);
 
     fclose(file);
     return qt;
 }
 
 /* Libera a memória alocada para a quadtree */
-void free_quadtree(struct quad_tree *qt)
+void free_quadtree(struct quadtree *tree)
 {
-    if (qt == NULL) {
-        return; /* Se o ponteiro for nulo, não faz nada */
+    if (!tree)
+        return;
+
+    if (!tree->is_leaf) {
+        free_quadtree(tree->northwest);
+        free_quadtree(tree->northeast);
+        free_quadtree(tree->southwest);
+        free_quadtree(tree->southeast);
     }
 
-    /* Se não for uma folha, libera recursivamente os filhos */
-    if (!qt->is_leaf) {
-        free_quadtree(qt->northwest);
-        free_quadtree(qt->northeast);
-        free_quadtree(qt->southwest);
-        free_quadtree(qt->southeast);
-    }
-
-    /* Finalmente, libera o próprio nó */
-    free(qt);
+    free(tree);
 }

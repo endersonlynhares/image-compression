@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
-#include "../include/quadtree.h"
-#include "../include/image.h"
+#include "../../lib/quadtree.h"
+#include "../../lib/image.h"
 
 struct square create_square(int x, int y, int size)
 {

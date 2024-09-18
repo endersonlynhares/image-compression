@@ -1,4 +1,4 @@
-#include "../include/bits.h"
+#include "../../lib/bits.h"
 
 /* Lê num_bits a partir do arquivo em buffer, começando na posição bit_pos */
 int read_bits(FILE *file, uint8_t *buffer, int *bit_pos, int num_bits)
